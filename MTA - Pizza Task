@@ -1,5 +1,3 @@
-//Asaf Yosef I.D 319094322
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #define origPizzasWidth 40.0//pizzas width constant value
