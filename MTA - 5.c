@@ -59,8 +59,8 @@ void main()
 	printCourses(arraySecondSemester, numOfCouresesSemesterB);//printing courses in semester B
 	int uniteArrays[MERGED_ARRAY_MAX_SIZE];//creating array of uniting
 	int intersectArrays[ARRAY_MAX_SIZE];//creating array of intersecting
-	int howManyCoursesUnited = unite(arrayFirstSemester,numOfCouresesSemesterA,arraySecondSemester,numOfCouresesSemesterB,uniteArrays);//uniting the array
-	int howManyCoursesIntersected=intersect(arrayFirstSemester,numOfCouresesSemesterA,arraySecondSemester,numOfCouresesSemesterB,intersectArrays);//intersecting the array
+	int howManyCoursesUnited = unite(arrayFirstSemester, numOfCouresesSemesterA, arraySecondSemester, numOfCouresesSemesterB, uniteArrays);//uniting the array
+	int howManyCoursesIntersected = intersect(arrayFirstSemester, numOfCouresesSemesterA, arraySecondSemester, numOfCouresesSemesterB, intersectArrays);//intersecting the array
 	sortCoursesInt(uniteArrays, howManyCoursesUnited);//sorting the array
 	sortCoursesInt(intersectArrays, howManyCoursesIntersected);//sorting the array
 	printUnion(uniteArrays, howManyCoursesUnited);//printing union array
@@ -68,12 +68,66 @@ void main()
 	printMinGradeSemesterA(findMinGrade(arrayFirstSemester, numOfCouresesSemesterA));//finding&printing the min course grade
 	COURSE_INFO minGrade = findMinGrade(arrayFirstSemester, numOfCouresesSemesterA);
 	int grades[MAX_GRADE_ARRAY];//creating grades array
-	int numOfExercises =exercisesArray(grades,minGrade);
-	printExercisesArray(grades,numOfExercises);//printing grades array
+	int numOfExercises = exercisesArray(grades, minGrade);
+	printExercisesArray(grades, numOfExercises);//printing grades array
 	printFindFailPass(grades, numOfExercises);//prints findFailPass function output
-	gettingLimitGrade(grades,numOfExercises);//getting s limit grade and using reorderGrades function + printing output
+	gettingLimitGrade(grades, numOfExercises);//getting s limit grade and using reorderGrades function + printing output
 
 }
+
+/*The following function gets an array of grades and returns the index of
+the first grade that is F and the one after it is a pass*/
+int findFailPass(int array[], int size)
+{//efficiency O(n)=log n = log size
+	int left = 0;
+	int right = size - 1;
+	int mid = (right + left) / 2;
+
+	while (mid>left||mid<right)
+	{
+		if (array[mid] >= PASS_TEST_GRADE)
+		{
+			//check fail on left
+			if (array[mid - 1] < PASS_TEST_GRADE)
+			{
+				return mid - 1;
+			}
+			else
+			{
+				mid /= 2;
+			}
+		}
+		else
+		{
+			//check pass on right
+			if (array[mid + 1] >= PASS_TEST_GRADE)
+			{
+				return mid;
+			}
+			else
+			{
+				mid =(mid+right)/ 2;
+			}
+		}
+	}
+	if (mid == right)//if you promote mid until end of the array check the last cell
+	{
+		if (array[mid - 1] < PASS_TEST_GRADE)
+		{
+			return mid - 1;
+		}
+	}
+	if (mid == left)//if you downgrade mid until first cell of the array check the first cell
+	{
+		if (array[mid + 1] >= PASS_TEST_GRADE)
+		{
+			return mid;
+		}
+	}
+
+}
+
+
 //The following function getting an input for reorderGrades function and updates the array
 //The function also prints the grades that are smaller than "limit" by order 
 void gettingLimitGrade(int grades[], int size)
@@ -82,10 +136,10 @@ void gettingLimitGrade(int grades[], int size)
 	printf("Please enter a limit grade: ");
 	scanf("%d", &limit);
 	printf("\n");
-	int logicSize=reorderGrades(grades, size, limit);
+	int logicSize = reorderGrades(grades, size, limit);
 	int k;
-	printf("After reordering grades, the grades smaller than %d are: ",limit);
-	for (k = 0; k < logicSize;k++)
+	printf("After reordering grades, the grades smaller than %d are: ", limit);
+	for (k = 0; k < logicSize; k++)
 	{
 		printf("%d ", grades[k]);
 	}
@@ -96,11 +150,11 @@ void gettingLimitGrade(int grades[], int size)
 before limit , the funciton also returns how much values are smaller than limit*/
 int reorderGrades(int grades[], int size, int limit)
 {//effciency O(n)=n=size
-	int counter = 0,write=0;
+	int counter = 0, write = 0;
 	int read;
-	for (read=0;read<size;read++)
+	for (read = 0; read < size; read++)
 	{
-		if (grades[read]<limit)
+		if (grades[read] < limit)
 		{
 			swapInt(grades, read, write);
 			write++;
@@ -113,58 +167,7 @@ int reorderGrades(int grades[], int size, int limit)
 //The following function gets an grades array and prints findFailPass function output
 void printFindFailPass(int grades[], int size)
 {
-	printf("Index of Fail-Pass is: %d\n",findFailPass(grades,size));
-}
-/*The following function gets an array of gradesand returns the index of
-the first grade that is F and the one after it is a pass*/
-int findFailPass(int grades[], int size)
-{//effciency O(n)=n=size
-	//Linear search
-	int k;
-	for (k = 0;k < size;k++)
-	{
-		if (k == 0)//checking for the first cell
-		{
-			if (grades[k]<PASS_TEST_GRADE && grades[k + 1]>=PASS_TEST_GRADE)//checking only the right cell
-			{
-				return k;
-			}
-			else
-			{
-				//continue
-			}
-			
-		}
-		else 
-		{
-			if (k == size - 1)//checking for the last cell
-			{
-				if (grades[k - 1] < PASS_TEST_GRADE && grades[k] >= PASS_TEST_GRADE)//checking only the left cell
-				{
-					return k - 1;
-				}
-			}
-			else 
-			{
-				if (grades[k] < PASS_TEST_GRADE && grades[k + 1] >= PASS_TEST_GRADE)//checking the mid from the right
-				{
-					return k;
-				}
-				else
-				{
-					if (grades[k] >= PASS_TEST_GRADE && grades[k - 1] < PASS_TEST_GRADE)//checking the mid from the left
-					{
-						return k - 1;
-					}
-					else 
-					{
-						//continue
-					}
-				}
-			}
-		}
-	}
-	return k-1;//returning k-1 no matter what(for not getting "not always return a value") 
+	printf("Index of Fail-Pass is: %d\n", findFailPass(grades, size));
 }
 
 //The following function gets an array of grades(with size) and prints it
@@ -172,7 +175,7 @@ void printExercisesArray(int array[], int size)
 {//efficiency O(n)=n=size
 	int k;
 	printf("Exercise grades:");
-	for (k = 0;k < size;k++)
+	for (k = 0; k < size; k++)
 	{
 		printf(" %d", array[k]);
 	}
@@ -180,21 +183,21 @@ void printExercisesArray(int array[], int size)
 }
 //The following funtion gets an grades array and the minGrade course and returns the number of exercises
 //The function also saves the grades into the array
-int exercisesArray(int array[],COURSE_INFO minGrade)
+int exercisesArray(int array[], COURSE_INFO minGrade)
 {//efficiency O(n)=n=numOfExercises
 	printf("How many exercises were given in course #%d?", minGrade.courseNum);
-	int numOfExercises; 
+	int numOfExercises;
 	scanf("%d", &numOfExercises);
 	printf("\n");
 	printf("Enter exercises grades:");
 	int k;
-	for (k = 0;k < numOfExercises;k++)
+	for (k = 0; k < numOfExercises; k++)
 	{
 		scanf(" %d ", &array[k]);
 	}
 	printf("\n");
 	array[0] = MIN_EXERCISE_GRADE;
-	array[numOfExercises - 1]= MAX_EXERCISE_GRADE;
+	array[numOfExercises - 1] = MAX_EXERCISE_GRADE;
 	return numOfExercises;
 }
 //The following function gets an array and swapping 2 cells in it(by index)
@@ -235,7 +238,7 @@ void printUnion(int array[], int size)
 void printCNum(int data[], int size)
 {//efficiency O(n)=n=size
 	int k;
-	for (k = 0;k < size;k++)
+	for (k = 0; k < size; k++)
 	{
 		printf("%d ", data[k]);
 	}
@@ -244,7 +247,7 @@ void printCNum(int data[], int size)
 //The foolowing function gets a minimun grade course of semester A and prints it
 void printMinGradeSemesterA(COURSE_INFO min)
 {//efficiency O(1)
-	printf("Minimum grade in semester A is: %d in course #%d\n\n",min.grade,min.courseNum);
+	printf("Minimum grade in semester A is: %d in course #%d\n\n", min.grade, min.courseNum);
 }
 //The following function gets an array of courses data (with his size) and returns the course with the lowest grade
 COURSE_INFO findMinGrade(COURSE_INFO data[], int size)
@@ -252,7 +255,7 @@ COURSE_INFO findMinGrade(COURSE_INFO data[], int size)
 	//efficiency O(n)=size
 	int index = 0;//saving the index of the lowest grade
 	int k;
-	for (k = 0;k < size;k++)
+	for (k = 0; k < size; k++)
 	{
 		if (data[k].grade < data[index].grade)
 		{
@@ -265,11 +268,11 @@ COURSE_INFO findMinGrade(COURSE_INFO data[], int size)
 
 /*The following function gets a courses array(with his size) and a course number and retuns true\false
 if the course number is in it*/
-bool searchingCoursesInCoursesArray(COURSE_INFO array[], int size,int courseNum)
+bool searchingCoursesInCoursesArray(COURSE_INFO array[], int size, int courseNum)
 {
 	//Using binari search to find the courseNum - efficiency O(n)=log(size)
 	int start = 0, end = size - 1, k;
-	for (k = 0;start <= end;k++)
+	for (k = 0; start <= end; k++)
 	{
 		int mid = (start + end) / 2;//using the middle between start and end to see wherever you are in the array
 		if (array[mid].courseNum == courseNum)
@@ -289,7 +292,7 @@ bool searchingCoursesInCoursesArray(COURSE_INFO array[], int size,int courseNum)
 	return false;//if we didn't find the num at all - return false
 }
 
-/*The following function gets the arrays and a new sharedCourses array, the function updates 
+/*The following function gets the arrays and a new sharedCourses array, the function updates
 the sharedCourses array and returns the number of shared courses on the first and second semester*/
 int intersect(COURSE_INFO dataA[], int sizeA, COURSE_INFO dataB[], int sizeB, int interCourse[])
 {//using the smaller array for cheking less options with the binari search
@@ -299,7 +302,7 @@ int intersect(COURSE_INFO dataA[], int sizeA, COURSE_INFO dataB[], int sizeB, in
 	if (numCoursesInSemesterA < numCoursesInSemesterB)
 	{//if A has less courses we can check only the smaller group
 		int k;
-		for (k = 0;k < sizeA;k++)
+		for (k = 0; k < sizeA; k++)
 		{
 			if (searchingCoursesInCoursesArray(dataB, sizeB, dataA[k].courseNum))
 			{
@@ -311,7 +314,7 @@ int intersect(COURSE_INFO dataA[], int sizeA, COURSE_INFO dataB[], int sizeB, in
 	else
 	{//if B has less courses(or even) we can check only the smaller group
 		int k;
-		for (k = 0;k < sizeB;k++)
+		for (k = 0; k < sizeB; k++)
 		{
 			if (searchingCoursesInCoursesArray(dataA, sizeA, dataB[k].courseNum))
 			{
@@ -328,21 +331,21 @@ int intersect(COURSE_INFO dataA[], int sizeA, COURSE_INFO dataB[], int sizeB, in
 //The following function gets an array(with his size) and course number and returns if the number in it
 bool searchingCourseInArray(int courseNum, int array[], int size)
 {//Using binari search to find the courseNum-efficiency O(n)=log(size)
-	int start = 0, end = size - 1,k;
-	for (k = 0;start <= end;k++)
+	int start = 0, end = size - 1, k;
+	for (k = 0; start <= end; k++)
 	{
-		int mid = (start + end)/2;//using the middle between start and end to see wherever you are in the array
+		int mid = (start + end) / 2;//using the middle between start and end to see wherever you are in the array
 		if (array[mid] == courseNum)
 			return true;//if found return true
 		else //checking if the number is on the right/left side of the array
 		{
 			if (array[mid] > courseNum)
 			{
-				end = mid-1;//promoting end to the center
+				end = mid - 1;//promoting end to the center
 			}
-			else 
+			else
 			{
-				start = mid+1;//promoting start to the center
+				start = mid + 1;//promoting start to the center
 			}
 		}
 	}
@@ -358,35 +361,35 @@ int unite(COURSE_INFO dataA[], int sizeA, COURSE_INFO dataB[], int sizeB, int un
 	if (sizeB > sizeA)
 	{
 		int k;
-		for (k = 0;k < sizeB;k++)
+		for (k = 0; k < sizeB; k++)
 		{//Putting all the courses from second array into the merged array(the bigger array)
 			uniteCourse[counter] = dataB[k].courseNum;
 			counter++;
 			sortCoursesInt(uniteCourse, counter);//if adding valies to the end of the array - making sure he's sorted
 		}
-		for (k = 0;k < sizeA;k++)
+		for (k = 0; k < sizeA; k++)
 		{//Putting all the courses that are not in second semester into the merged array
-			if (!searchingCourseInArray(dataA[k].courseNum, uniteCourse,counter))
+			if (!searchingCourseInArray(dataA[k].courseNum, uniteCourse, counter))
 			{
 				uniteCourse[counter] = dataA[k].courseNum;
 				counter++;
 				sortCoursesInt(uniteCourse, counter);//if adding valies to the end of the array - making sure he's sorted
 			}
-			
+
 		}
 	}
 	else
 	{
 		int k;
-		for (k = 0;k < sizeA;k++)
+		for (k = 0; k < sizeA; k++)
 		{//Putting all the courses from first array into the merged array(the bigger array)
 			uniteCourse[counter] = dataA[k].courseNum;
 			counter++;
 			sortCoursesInt(uniteCourse, counter);//if adding valies to the end of the array - making sure he's sorted
 		}
-		for (k = 0;k < sizeB;k++)
+		for (k = 0; k < sizeB; k++)
 		{//Putting all the courses that are not in first semester into the merged array
-			if (!searchingCourseInArray(dataB[k].courseNum, uniteCourse,counter))
+			if (!searchingCourseInArray(dataB[k].courseNum, uniteCourse, counter))
 			{
 				uniteCourse[counter] = dataB[k].courseNum;
 				counter++;
@@ -417,7 +420,7 @@ void printCourses(COURSE_INFO data[], int size)
 	printf("Course# Grade\n");
 	printf("======= =====\n");
 	int k;
-	for (k = 0;k < size;k++)
+	for (k = 0; k < size; k++)
 	{
 		printf("%-7d %-5d\n", data[k].courseNum, data[k].grade);// -(minus) is aligining to the left
 	}
@@ -461,7 +464,7 @@ the users input to put the courses data to the array*/
 void updateArrayFirstSemester(COURSE_INFO array[], int numOfCourses)
 {//efficiency is O(n)=numOfCourses
 	int k;
-	for (k = 0;k < numOfCourses;k++)
+	for (k = 0; k < numOfCourses; k++)
 	{
 		printf("Enter course number and grade:");
 		scanf("%d%d", &array[k].courseNum, &array[k].grade);
