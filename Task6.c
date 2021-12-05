@@ -6,8 +6,11 @@
 #define NUMBER_OF_GROUPS 3
 #define NUMBER_OF_STUDENTS_EACH_GROUP 6
 #define MAX_NAME_LEN 22
+#define MAX_FULL_NAME_LEN 29
 #define MAX_COURSES 10
 #define NUMBER_OF_MINUS 32
+#define GROUP_STUDENT_NUMBER 6
+#define GROUP_NAME_LENGTH 7
 
 
 
@@ -17,6 +20,8 @@ void putLastCellZero(char array[]);
 void getStudent(STUDENT studentArray[], int size);
 void getGroupA(STUDENT studentArray[], int size);
 void printLine(char ch, int num);
+int getStudentNames(STUDENT stuData[][GROUP_STUDENT_NUMBER], int rows, int cols, int courseNum, char stuNames[][MAX_FULL_NAME_LEN]);
+	
 
 typedef struct CourseInfo
 {
@@ -39,6 +44,98 @@ void main()
 
 
 }
+void printArrayOfStudentsInCourses(char stuNames[],int size,int courseNum)
+{
+	printf("Names of students in course#%d:\n",courseNum);
+	int k;
+	for (k = 0; k < size; k++)
+	{
+		printf("%s\n", stuNames[k]);
+	}
+}
+
+//The following function gets an arrays of group name + name and insters it into stuNames
+void pushToString(char groupNnmber[], char name[], char stuNames[])
+{
+	int k;
+	for (k = 0; k < GROUP_NAME_LENGTH; k++)//running on the group name 
+	{
+		stuNames[k] = groupNnmber[k];
+	}
+	for (k = 0; k < MAX_NAME_LEN; k++)//running on the name 
+	{
+		stuNames[k+GROUP_NAME_LENGTH] = name[k];
+	}
+	stuNames[MAX_FULL_NAME_LEN] = '\0';//putting \0 to finish string
+}
+
+//The following function gets an array of strings and a student and puts it inside by the group number
+void pushToStuNames(char stuNames[], STUDENT stuData,int numOfGroup)
+{
+	switch (numOfGroup+1)
+	{
+	case 1:
+		pushToString("GroupA ", stuData.name,stuNames);
+		break;
+	case 2:
+		pushToString("GroupB ", stuData.name, stuNames);
+		break;
+	case 3 :
+		pushToString("GroupC ", stuData.name, stuNames);
+		break;
+	default:
+		break;
+	}
+
+}
+
+//The following function gets a student and returns if he studies the specific course
+bool isHeStudingIt(STUDENT student, int courseNum)
+{
+	int numOfCourses = student.nofCourses;
+	int k;
+	for (k = 0; k < numOfCourses; k++)
+	{
+		if (student.course_info[k].courseNum == courseNum)
+		{
+			return true;
+		}
+		else
+		{
+			//do nothing and continue to check
+		}
+	}
+	return false;
+}
+
+
+//The following funtion gets a 2 demsion array of studetns and returns how many are studying a specific xourse
+//The fucntion also will update the names of the students that are studing the course
+int getStudentNames(STUDENT stuData[][GROUP_STUDENT_NUMBER], int rows, int cols, int courseNum, char stuNames[][MAX_FULL_NAME_LEN])
+{
+	int counter = 0;
+	int k, n;
+	for (k = 0; k < rows; k++)//running on rows
+	{
+		for (n = 0; n < cols; n++)//running on cols
+		{
+			if (isHeStudingIt(stuData[k][n],courseNum))
+			{
+				pushToStuNames(stuNames[counter],stuData[k][n],k);//sending the specific row
+				counter++;
+			}
+			else 
+			{
+				//do nothing continue to check
+			}
+
+		}
+
+	}
+	printArrayOfStudentsInCourses(stuNames,counter,courseNum);
+	return counter;
+}
+
 //The following function gets a student and get an input of num of courses& courses he took.
 //The function returns the updates student struct
 STUDENT gettingCourses(STUDENT student)
