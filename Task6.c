@@ -1,4 +1,4 @@
-#define _SECURE_CRT_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -11,6 +11,10 @@
 #define NUMBER_OF_MINUS 32
 #define GROUP_STUDENT_NUMBER 6
 #define GROUP_NAME_LENGTH 7
+#define WHICH_NAME_TO_PUT_IN "Lane"
+#define SPACE_STRING " "
+#define SPACE_CHAR ' '
+#define SPACE_STRING_LEN 1
 
 
 
@@ -44,7 +48,136 @@ void main()
 
 
 }
-void printArrayOfStudentsInCourses(char stuNames[],int size,int courseNum)
+//The following function replacing cells in name from word in range of k to k+wordLen 
+void changeNameToWord(char name[], int k, int wordLen, char word[])
+{
+	int i;
+	for (i = 0; k < i + wordLen; k++)
+	{
+		name[k + i] = word[i];	
+	}
+}
+//The following function checking if there is a word inside name from k to k+wordLen
+bool compareString(char name[], int k, int wordLen, char word[])
+{
+	int i;
+	for (i=0; k < i + wordLen; k++)
+	{
+		if (name[k+i] != word[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+//The follwing function checking if "word" is inside "name" and putting "word" instead 
+void changingNameToNewName(char name[], char word[])
+{
+	int size = strlen(name);
+	int k;
+	int wordLen = strlen(word);
+	for (k = 0; k < size; k++)
+	{
+		if (name[k] == word[0])//if the first letter inside - check if the word is inside
+		{
+			if (k + wordLen < size)//checking if we're not going out of the string
+			{
+				if (compareString(name, k, wordLen, word))//checking only wordLen of the name to compare
+				{
+					changeNameToWord(name, k, wordLen, word);//changing name to word
+				}
+			}
+		}
+	}
+}
+
+//The following function gets full name and putting last name into another array
+void onlyLastName(char name[], char lastName[])
+{
+	int numOfSpaces = 0;
+	int k;
+	for (k = 0; numOfSpaces < 2; k++)
+	{
+		if (name[k] == SPACE_CHAR)
+			numOfSpaces++;
+	}
+	int i = 0;
+	while (name[k] != '\0')
+	{
+		lastName[i] = name[k];
+		i++; 
+		k++;
+	}
+	name[k] = '\0';
+}
+
+
+//The following function gets full name and putting first name into another array
+void onlyFirstName(char name[],char firstName[])
+{
+	int numOfSpaces = 0;
+	int k;
+	for (k = 0; numOfSpaces < 1;k++)
+	{
+		if (name[k] == SPACE_CHAR)
+			numOfSpaces++;
+	}
+	for (k = 0; numOfSpaces < 2; k++)
+	{
+		if (name[k] == SPACE_CHAR)
+		{
+			numOfSpaces++;
+		}
+		else
+		{
+			firstName[k] = name[k + GROUP_NAME_LENGTH];
+		}
+		
+	}
+	firstName[k]='\0';
+
+}
+
+//The following function gets full name and putting group name into another array
+void onlyGroupName(char name[], char groupName[])
+{
+	
+	int numOfSpaces = 0;
+	int k;
+	for (k = 0; numOfSpaces < 1; k++)
+	{
+		groupName[k] = name[k];
+		if (name[k] == SPACE_CHAR)
+		{
+			numOfSpaces++;
+		}
+	}
+	groupName[k] = '\0';
+		
+}
+
+//The following function gets a string and changing each time the name "Lois" is appeared to "Lane"
+void splitName(char name[],int size)
+{
+		char groupName[MAX_NAME_LEN];
+		onlyGroupName(name, groupName);//putting group name into groupName 
+		char firstName[MAX_NAME_LEN];
+		onlyFirstName(name, firstName);//putting first name into firstName 
+		changingNameToNewName(firstName, WHICH_NAME_TO_PUT_IN);//changing name to newName(if it's in)
+		char lastName[MAX_NAME_LEN];
+		onlyLastName(name, lastName);//putting name into lastName
+		changingNameToNewName(lastName, WHICH_NAME_TO_PUT_IN);//changing name to newName(if it's in)
+		strcat(groupName, SPACE_STRING);
+		strcat(groupName, firstName);
+		strcat(groupName, SPACE_STRING);
+		strcat(groupName, lastName);
+		groupName[strlen(groupName) + 1] = '\0';
+		strcpy(name, groupName);//coping the new updated array to the old array
+}
+
+
+//The following function gets an array of names and course num they all went and prints their names 
+void printArrayOfStudentsInCourses(char stuNames[][MAX_FULL_NAME_LEN],int size,int courseNum)
 {
 	printf("Names of students in course#%d:\n",courseNum);
 	int k;
@@ -66,7 +199,7 @@ void pushToString(char groupNnmber[], char name[], char stuNames[])
 	{
 		stuNames[k+GROUP_NAME_LENGTH] = name[k];
 	}
-	stuNames[MAX_FULL_NAME_LEN] = '\0';//putting \0 to finish string
+	stuNames[MAX_FULL_NAME_LEN] = '\0';/*putting \0 to finish string*/
 }
 
 //The following function gets an array of strings and a student and puts it inside by the group number
