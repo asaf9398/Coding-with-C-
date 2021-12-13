@@ -47,7 +47,7 @@ void main()
 		case 2:
 			checkQ2();
 			break;
-		case 3:
+		/*case 3:
 			checkQ3();
 			break;
 		case 4:
@@ -70,7 +70,7 @@ void main()
 			break;
 		case EXIT:
 			exit = true;
-			break;
+			break;*/
 		default:
 			printf("Invalid choice.\n");
 		}
@@ -106,7 +106,7 @@ void checkQ2()
 	scanf("%d%d", &x, &y);
 	printf("There are %d paths from (0,0) to (%d,%d)\n", howManyPaths(x, y), x, y);
 }
-
+/*
 void checkQ3()
 {
 	int x, num;
@@ -250,16 +250,16 @@ void swap(int arr[], int i, int j)
 	arr[i] = arr[j];
 	arr[j] = tmp;
 }
-
+*/
 /******************************* Recursive functions **************************/
 // Add recursive functions implementation here
 
-
-/*The following function gets a 
-number and a digit and returns true if the number of times 
-that digit is inside num is parity*/  
+/*The following function gets a
+number and a digit and returns true if the number of times
+that digit is inside num is parity*/
 bool isEven(int num, int dig)
 {
+	//need to fix
 	int counter = 0;
 	if (num == 0)
 	{
@@ -283,25 +283,25 @@ bool isEven(int num, int dig)
 	{
 		return false;
 	}
-}/*The following function gets a dot of(x,y) and returns the number of ways to go from(0,0) to (x,y)*/
+}
+
+/*The following function gets a dot of(x,y) and returns the number of ways to go from(0,0) to (x,y)*/
 int howManyPaths(int x, int y)
 {
 	int counter = 0;
 	if (x == 0 && y == 0)
 	{
-		return;
+		return 1;//when you came to(0,0) its a full path so count it
 	}
 
-	if (x - 1 != 0)
+	if (x - 1 >= 0)
 	{
-		return counter +=1 + (howManyPaths(x - 1, y));
+		counter += (howManyPaths(x - 1, y));//if you can move more on X do it
 	}
-	else
+	if (y - 1 >= 0)
 	{
-		if (y - 1 != 0)
-		{
-			return counter += 1 + (howManyPaths(x, y-1));
-		}
+		counter += (howManyPaths(x, y-1));//if you can move more on X do it
 	}
-	return counter;
+
+	return counter;//return all the counting you did on your path
 }
