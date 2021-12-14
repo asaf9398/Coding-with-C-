@@ -259,29 +259,18 @@ number and a digit and returns true if the number of times
 that digit is inside num is parity*/
 bool isEven(int num, int dig)
 {
-	//need to fix
-	int counter = 0;
-	if (num == 0)
+	//need to check
+	if (num < 10)
 	{
-		return false;
+		return(!num == dig);
 	}
-
-	if (num % 10 == dig)
+	if (dig == num % 10)
 	{
-		return counter += 1 + isEven(num / 10, dig);//if contains it - returns +1 and move to the next digit
+		return(!isEven(num / 10, dig));
 	}
 	else
 	{
-		return counter += isEven(num / 10, dig);//if doesn't contain it - returns move to the next digit
-	}
-
-	if (counter % 2 == 0)//checking if number of times is parity
-	{
-		return true;
-	}
-	else
-	{
-		return false;
+		return(isEven(num / 10, dig));
 	}
 }
 
