@@ -11,6 +11,13 @@
 // Add your recursive functions declarations here
 bool isEven(int num, int dig);
 int howManyPaths(int x, int y);
+int biggestLowPower(int x, int num);
+int partSum(int num);
+void intToStr(int num, char s[]);
+void fillMaxPrefixesArray(int numbers[], int n,int maxPrefixesArray[]);
+void getMinToStart(int numbers[], int n);
+void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2);
+int countSmaller(int arr[], int start, int end, int num);
 
 // Testing functions
 int readArray(int data[], int maxSize);
@@ -47,7 +54,7 @@ void main()
 		case 2:
 			checkQ2();
 			break;
-		/*case 3:
+		case 3:
 			checkQ3();
 			break;
 		case 4:
@@ -70,7 +77,7 @@ void main()
 			break;
 		case EXIT:
 			exit = true;
-			break;*/
+			break;
 		default:
 			printf("Invalid choice.\n");
 		}
@@ -106,7 +113,7 @@ void checkQ2()
 	scanf("%d%d", &x, &y);
 	printf("There are %d paths from (0,0) to (%d,%d)\n", howManyPaths(x, y), x, y);
 }
-/*
+
 void checkQ3()
 {
 	int x, num;
@@ -147,6 +154,44 @@ void checkQ6()
 	printf("Max prefixes array: ");
 	printArray(maxPrefixes, size);
 }
+// This function prints the first size elements of data array (integers).
+void printArray(int data[], int size)
+{
+	int i;
+
+	for (i = 0; i < size; i++)
+	{
+		printf("%d ", data[i]);
+	}
+	printf("\n");
+}
+
+// This function reads a series of integers from user into data array.
+// The function will first ask the user to enter the number of integers he wishes
+// to enter to array. If number is bigger than maxSize, then only the first masSize
+// numbers will be read.
+// The fucntion returns the arrays logical size (number of elements inserted into array).
+int readArray(int data[], int maxSize)
+{
+	int count;
+	int i;	// number of elements inserted into array
+
+	printf("How many numbers would you like to enter to array ? (no more than %d) ", maxSize);
+	scanf("%d", &count);
+	if (count > maxSize)
+	{
+		count = maxSize;
+	}
+	printf("Please enter %d integers: ", count);
+
+	for (i = 0; i < count; i++)
+	{
+		scanf("%d", &data[i]);	// read current input number
+	}
+
+	return count;
+}
+
 
 void checkQ7()
 {
@@ -162,6 +207,24 @@ void checkQ7()
 	printf("The sorted array: ");
 	printArray(numbers, size);
 }
+// This functions sorts arr in increasing order using bubble sort algorithm
+void bubbleSort(int arr[], int size)
+{
+	int i, j;
+
+	for (i = 0; i < size - 1; i++)
+		for (j = 0; j < size - i - 1; j++)
+			if (arr[j] > arr[j + 1])
+				swap(arr, j, j + 1);
+}
+
+void swap(int arr[], int i, int j)
+{
+	int tmp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = tmp;
+}
+
 
 void checkQ8()
 {
@@ -195,62 +258,9 @@ void checkQ9()
 	printf("There are %d numbers in array that are smaller than %d\n", countSmaller(numbers, 0, size - 1, num), num);
 }
 
-// This function reads a series of integers from user into data array. 
-// The function will first ask the user to enter the number of integers he wishes
-// to enter to array. If number is bigger than maxSize, then only the first masSize
-// numbers will be read.
-// The fucntion returns the arrays logical size (number of elements inserted into array).
-int readArray(int data[], int maxSize)
-{
-	int count;
-	int i;	// number of elements inserted into array
 
-	printf("How many numbers would you like to enter to array ? (no more than %d) ", maxSize);
-	scanf("%d", &count);
-	if (count > maxSize)
-	{
-		count = maxSize;
-	}
-	printf("Please enter %d integers: ", count);
 
-	for (i = 0; i < count; i++)
-	{
-		scanf("%d", &data[i]);	// read current input number		
-	}
 
-	return count;
-}
-
-// This function prints the first size elements of data array (integers).
-void printArray(int data[], int size)
-{
-	int i;
-
-	for (i = 0; i < size; i++)
-	{
-		printf("%d ", data[i]);
-	}
-	printf("\n");
-}
-
-// This functions sorts arr in increasing order using bubble sort algorithm
-void bubbleSort(int arr[], int size)
-{
-	int i, j;
-
-	for (i = 0; i < size - 1; i++)
-		for (j = 0; j < size - i - 1; j++)
-			if (arr[j] > arr[j + 1])
-				swap(arr, j, j + 1);
-}
-
-void swap(int arr[], int i, int j)
-{
-	int tmp = arr[i];
-	arr[i] = arr[j];
-	arr[j] = tmp;
-}
-*/
 /******************************* Recursive functions **************************/
 // Add recursive functions implementation here
 
@@ -262,15 +272,16 @@ bool isEven(int num, int dig)
 	//need to check
 	if (num < 10)
 	{
-		return(!num == dig);
+		//return(!num == dig);
+		return !(dig == num);
 	}
 	if (dig == num % 10)
 	{
-		return(!isEven(num / 10, dig));
+		return !(isEven(num / 10, dig));
 	}
 	else
 	{
-		return(isEven(num / 10, dig));
+		return ((isEven(num / 10, dig)));
 	}
 }
 
@@ -278,7 +289,7 @@ bool isEven(int num, int dig)
 int howManyPaths(int x, int y)
 {
 	int counter = 0;
-	if (x == 0 && y == 0)
+	if (x == 0 || y == 0)
 	{
 		return 1;//when you came to(0,0) its a full path so count it
 	}
@@ -289,8 +300,203 @@ int howManyPaths(int x, int y)
 	}
 	if (y - 1 >= 0)
 	{
-		counter += (howManyPaths(x, y-1));//if you can move more on X do it
+		counter += (howManyPaths(x, y - 1));//if you can move more on X do it
 	}
 
 	return counter;//return all the counting you did on your path
+}
+/*The following function gets 2 numbers x and num(positive and whole).
+The function returns the biggest power of x when  x<= num*/
+int biggestLowPower(int x, int num)
+{
+	if (x > num)//if the base is bigger than what reamined from num return 1(for multiply)
+		return 1;
+	else
+	{
+		if (x == num)//if the base is equal to what reamined from num return base(for multiply)
+		{
+			return x;
+		}
+			return x * biggestLowPower(x, num / x);//if the base is smaller than what reamined from num use the recursion again with num/base
+	}
+}
+/*The following function gets a number and returns the sum of digits without the LSD digit(the most right digit).
+If the number if smaller than 10 the sum is equal to 0 */
+int partSum(int num)
+{
+	int sum = 0;
+	if (num < 10)//exit point
+	{
+		//if the number has only one digit so sum will be 0
+		return (num / 10);//if we got to the last digit it's means that it is already in the sum(because of the previous entering to the recursion) 
+	}
+	else
+	{
+		sum += ((num % 100) / 10) +(partSum(num / 10));//we're summing only the digit before the last one
+	}
+	return sum;//returning the final sum of digits(without right digit)
+}
+/*The following function gets a number and puts it into a char array(string)*/
+void intToStr(int num, char s[])
+{
+	if (num < 10)
+	{
+		s[0] = (char)(num + '0');//if 
+		s[1] = '\0';//closing the string
+	}
+	else
+	{ 
+		intToStr(num / 10, s);//starting from the left digit of num
+		s[strlen(s) + 1] = '\0';//veryfing that the character will have space for entering
+		s[strlen(s)] = (char)((num % 10) + '0');//putting the next digit in the next cell
+	}
+}
+/*The following function gets an array of integers(numbers[])with length n.
+The function will update maxPrefixesArray[] that in maxPrefixesArray[i]
+will be the highest number from the first i numbers in number[] */
+void fillMaxPrefixesArray(int numbers[], int n, int maxPrefixesArray[])
+{
+	if (n==0)//starting point
+	{
+		maxPrefixesArray[n] = numbers[n];//putting in the first cell the first value(you don't have something before it)
+	}
+	else
+	{
+		fillMaxPrefixesArray(numbers, n-1, maxPrefixesArray);//getting to i=0
+		if (n < MAX_INT_SIZE) {
+			if (maxPrefixesArray[n-1] > numbers[n])//checking who is bigger: the biggest number so fur or the next number from numbers[]
+			{
+				maxPrefixesArray[n] = maxPrefixesArray[n-1];
+			}
+			else
+			{
+				maxPrefixesArray[n] = numbers[n];
+			}
+		}
+	}
+}
+
+/*The following function gets an array of numbers(with size n).
+The function will update the array that numbers[0] will have the smallest number of numbers[]*/
+void getMinToStart(int numbers[], int n)
+{
+	int tmp;
+	if (n==2)//checking when you got to the last 2 cells
+	{
+		if (numbers[n - 2] > numbers[n - 1])//updating if the first cell is not the smallest cell
+		{
+			tmp = numbers[n - 2];
+			numbers[n - 2]= numbers[n - 1];
+			numbers[n - 1]=tmp;
+		}
+	}
+	else
+	{
+		if (numbers[n - 1] < numbers[n - 2])//updating if right first cell is the smaller cell
+		{
+			tmp = numbers[n - 2];
+			numbers[n - 2] = numbers[n - 1];
+			numbers[n - 1] = tmp;
+		}
+		getMinToStart(numbers, n - 1);
+	}
+}
+
+/*The following function gets 2 sorted arrays and combines them(sorted)*/
+void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2)
+{//need to check
+	if (size1 == 0 || size2 == 0)
+	{
+		if (size1 == 0 && size2 == 0)
+		{
+			return;//if both equal to 0 -> it means you finished
+		}
+		if (size1 != 0)
+		{//continue to put in arr1 into arr2
+			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
+			combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
+		}
+		if (size2 != 0)
+		{
+			return;//if size2 equal to 0 -> it means you finished because all array1 is already in
+		}
+			
+	}
+	else
+	{
+		if (sortedArr1[size1 - 1] == sortedArr2[size2 - 1])
+		{
+			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
+			sortedArr2[size1 + size2 - 2] = sortedArr2[size2 - 1];
+			combineArrays(sortedArr1, size1 - 1, sortedArr2, size2-1);
+		}
+		if (sortedArr1[size1 - 1] < sortedArr2[size2 - 1])
+		{
+			sortedArr2[size1 + size2 - 1] = sortedArr2[size2 - 1];
+			combineArrays(sortedArr1, size1, sortedArr2, size2 - 1);
+		}
+		if (sortedArr1[size1 - 1] > sortedArr2[size2 - 1])
+		{
+			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
+			combineArrays(sortedArr1, size1-1, sortedArr2, size2);
+		}
+		
+
+	}
+}
+/*The following function gets an array, 2 indexes and number.
+The function will return how many numbers in the array(between start to end) are smaller than number*/
+int countSmaller(int arr[], int start, int end, int num)
+{//need to check
+	int mid = (start + end) / 2;
+	if(arr[mid]==num)
+	{
+		return (mid - start);
+	}
+	else
+	{
+		if (arr[mid] < num)
+		{
+		if(mid+1<=end)
+		{ 
+			if (arr[mid + 1] < num)
+			{
+				return (mid - start) + countSmaller(arr, mid, end, num);
+			}	
+			else
+			{
+				return (mid - start);
+			}
+		}
+		else
+		{
+			return (mid-start);
+		}
+		}
+		if (arr[mid] > num)
+		{
+			if(mid-1>=start)
+			{ 
+				if (arr[mid - 1] > num)
+				{
+					return countSmaller(arr, start, mid, num);
+				}
+				else
+				{
+					return (mid-start);
+				}
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+
+
+
+
+
+
+
 }
