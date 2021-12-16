@@ -392,19 +392,26 @@ void getMinToStart(int numbers[], int n)
 	}
 	else
 	{
-		if (numbers[n - 1] < numbers[n - 2])//updating if right first cell is the smaller cell
+		if (n == 1)
 		{
-			tmp = numbers[n - 2];
-			numbers[n - 2] = numbers[n - 1];
-			numbers[n - 1] = tmp;
+			return;
 		}
-		getMinToStart(numbers, n - 1);
+		else
+		{
+			if (numbers[n - 1] < numbers[n - 2])//updating if right first cell is the smaller cell
+			{
+				tmp = numbers[n - 2];
+				numbers[n - 2] = numbers[n - 1];
+				numbers[n - 1] = tmp;
+			}
+			getMinToStart(numbers, n - 1);
+		}
 	}
 }
 
 /*The following function gets 2 sorted arrays and combines them(sorted)*/
 void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2)
-{//need to check
+{
 	if (size1 == 0 || size2 == 0)
 	{
 		if (size1 == 0 && size2 == 0)
@@ -414,31 +421,32 @@ void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2)
 		if (size1 != 0)
 		{//continue to put in arr1 into arr2
 			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
+			return combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
 		}
 		if (size2 != 0)
 		{
-			return;//if size2 equal to 0 -> it means you finished because all array1 is already in
+			size2 = 0;//if size2 equal to 0 -> it means you finished because all array1 is already in
+			return combineArrays(sortedArr1, size1, sortedArr2, size2);
 		}
 			
 	}
 	else
 	{
+		
 		if (sortedArr1[size1 - 1] == sortedArr2[size2 - 1])
-		{
+		{//put only the arr1 into arr2(you can do both but it can be source for problems with size calculation)
 			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			sortedArr2[size1 + size2 - 2] = sortedArr2[size2 - 1];
-			combineArrays(sortedArr1, size1 - 1, sortedArr2, size2-1);
+			return combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
 		}
 		if (sortedArr1[size1 - 1] < sortedArr2[size2 - 1])
 		{
 			sortedArr2[size1 + size2 - 1] = sortedArr2[size2 - 1];
-			combineArrays(sortedArr1, size1, sortedArr2, size2 - 1);
+			return combineArrays(sortedArr1, size1, sortedArr2, size2 - 1);
 		}
 		if (sortedArr1[size1 - 1] > sortedArr2[size2 - 1])
 		{
 			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			combineArrays(sortedArr1, size1-1, sortedArr2, size2);
+			return combineArrays(sortedArr1, size1-1, sortedArr2, size2);
 		}
 		
 
@@ -461,7 +469,7 @@ int countSmaller(int arr[], int start, int end, int num)
 		{ 
 			if (arr[mid + 1] < num)
 			{
-				return (mid - start) + countSmaller(arr, mid, end, num);
+				return (mid - start) + countSmaller(arr, mid+1, end, num);
 			}	
 			else
 			{
@@ -479,7 +487,7 @@ int countSmaller(int arr[], int start, int end, int num)
 			{ 
 				if (arr[mid - 1] > num)
 				{
-					return countSmaller(arr, start, mid, num);
+					return countSmaller(arr, start, mid-1, num);
 				}
 				else
 				{
@@ -492,11 +500,4 @@ int countSmaller(int arr[], int start, int end, int num)
 			}
 		}
 	}
-
-
-
-
-
-
-
 }
