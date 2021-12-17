@@ -7,6 +7,15 @@
 #define MAX_INT_SIZE 10
 #define FUNC_COUNT 9
 #define EXIT 0
+#define ONLY_ONE 1
+#define NEXT_CELL 1
+#define NOTHING 0
+#define MIN_CELLS 2
+#define END_OF_STRING '\0'
+#define FIRST_CELL 0
+#define ZERO_ASCII '0'
+
+
 
 // Add your recursive functions declarations here
 bool isEven(int num, int dig);
@@ -14,7 +23,7 @@ int howManyPaths(int x, int y);
 int biggestLowPower(int x, int num);
 int partSum(int num);
 void intToStr(int num, char s[]);
-void fillMaxPrefixesArray(int numbers[], int n,int maxPrefixesArray[]);
+void fillMaxPrefixesArray(int numbers[], int n, int maxPrefixesArray[]);
 void getMinToStart(int numbers[], int n);
 void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2);
 int countSmaller(int arr[], int start, int end, int num);
@@ -288,19 +297,19 @@ bool isEven(int num, int dig)
 /*The following function gets a dot of(x,y) and returns the number of ways to go from(0,0) to (x,y)*/
 int howManyPaths(int x, int y)
 {
-	int counter = 0;
-	if (x == 0 || y == 0)
+	int counter = NOTHING;
+	if (x == NOTHING || y == NOTHING)
 	{
-		return 1;//when you came to(0,0) its a full path so count it
+		return ONLY_ONE;//when you came to(0,0) its a full path so count it
 	}
 
-	if (x - 1 >= 0)
+	if (x - ONLY_ONE >= NOTHING)
 	{
-		counter += (howManyPaths(x - 1, y));//if you can move more on X do it
+		counter += (howManyPaths(x - ONLY_ONE, y));//if you can move more on X do it
 	}
-	if (y - 1 >= 0)
+	if (y - ONLY_ONE >= NOTHING)
 	{
-		counter += (howManyPaths(x, y - 1));//if you can move more on X do it
+		counter += (howManyPaths(x, y - ONLY_ONE));//if you can move more on X do it
 	}
 
 	return counter;//return all the counting you did on your path
@@ -310,21 +319,21 @@ The function returns the biggest power of x when  x<= num*/
 int biggestLowPower(int x, int num)
 {
 	if (x > num)//if the base is bigger than what reamined from num return 1(for multiply)
-		return 1;
+		return ONLY_ONE;
 	else
 	{
 		if (x == num)//if the base is equal to what reamined from num return base(for multiply)
 		{
 			return x;
 		}
-			return x * biggestLowPower(x, num / x);//if the base is smaller than what reamined from num use the recursion again with num/base
+		return x * biggestLowPower(x, num / x);//if the base is smaller than what reamined from num use the recursion again with num/base
 	}
 }
 /*The following function gets a number and returns the sum of digits without the LSD digit(the most right digit).
 If the number if smaller than 10 the sum is equal to 0 */
 int partSum(int num)
 {
-	int sum = 0;
+	int sum = NOTHING;
 	if (num < 10)//exit point
 	{
 		//if the number has only one digit so sum will be 0
@@ -332,7 +341,7 @@ int partSum(int num)
 	}
 	else
 	{
-		sum += ((num % 100) / 10) +(partSum(num / 10));//we're summing only the digit before the last one
+		sum += ((num % 100) / 10) + (partSum(num / 10));//we're summing only the digit before the last one
 	}
 	return sum;//returning the final sum of digits(without right digit)
 }
@@ -341,14 +350,14 @@ void intToStr(int num, char s[])
 {
 	if (num < 10)
 	{
-		s[0] = (char)(num + '0');//if 
-		s[1] = '\0';//closing the string
+		s[FIRST_CELL] = (char)(num + ZERO_ASCII);//if 
+		s[NEXT_CELL] = END_OF_STRING;//closing the string
 	}
 	else
-	{ 
+	{
 		intToStr(num / 10, s);//starting from the left digit of num
-		s[strlen(s) + 1] = '\0';//veryfing that the character will have space for entering
-		s[strlen(s)] = (char)((num % 10) + '0');//putting the next digit in the next cell
+		s[strlen(s) + NEXT_CELL] = END_OF_STRING;//veryfing that the character will have space for entering
+		s[strlen(s)] = (char)((num % 10) + ZERO_ASCII);//putting the next digit in the next cell
 	}
 }
 /*The following function gets an array of integers(numbers[])with length n.
@@ -356,17 +365,17 @@ The function will update maxPrefixesArray[] that in maxPrefixesArray[i]
 will be the highest number from the first i numbers in number[] */
 void fillMaxPrefixesArray(int numbers[], int n, int maxPrefixesArray[])
 {
-	if (n==0)//starting point
+	if (n == FIRST_CELL)//starting point
 	{
 		maxPrefixesArray[n] = numbers[n];//putting in the first cell the first value(you don't have something before it)
 	}
 	else
 	{
-		fillMaxPrefixesArray(numbers, n-1, maxPrefixesArray);//getting to i=0
+		fillMaxPrefixesArray(numbers, n - NEXT_CELL, maxPrefixesArray);//getting to i=0
 		if (n < MAX_INT_SIZE) {
-			if (maxPrefixesArray[n-1] > numbers[n])//checking who is bigger: the biggest number so fur or the next number from numbers[]
+			if (maxPrefixesArray[n - NEXT_CELL] > numbers[n])//checking who is bigger: the biggest number so fur or the next number from numbers[]
 			{
-				maxPrefixesArray[n] = maxPrefixesArray[n-1];
+				maxPrefixesArray[n] = maxPrefixesArray[n - NEXT_CELL];
 			}
 			else
 			{
@@ -381,30 +390,30 @@ The function will update the array that numbers[0] will have the smallest number
 void getMinToStart(int numbers[], int n)
 {
 	int tmp;
-	if (n==2)//checking when you got to the last 2 cells
+	if (n == MIN_CELLS)//checking when you got to the last 2 cells
 	{
-		if (numbers[n - 2] > numbers[n - 1])//updating if the first cell is not the smallest cell
+		if (numbers[n - MIN_CELLS] > numbers[n - NEXT_CELL])//updating if the first cell is not the smallest cell
 		{
-			tmp = numbers[n - 2];
-			numbers[n - 2]= numbers[n - 1];
-			numbers[n - 1]=tmp;
+			tmp = numbers[n - MIN_CELLS];
+			numbers[n - MIN_CELLS] = numbers[n - NEXT_CELL];
+			numbers[n - NEXT_CELL] = tmp;
 		}
 	}
 	else
 	{
-		if (n == 1)
+		if (n == ONLY_ONE)
 		{
 			return;
 		}
 		else
 		{
-			if (numbers[n - 1] < numbers[n - 2])//updating if right first cell is the smaller cell
+			if (numbers[n - NEXT_CELL] < numbers[n - MIN_CELLS])//updating if right first cell is the smaller cell
 			{
-				tmp = numbers[n - 2];
-				numbers[n - 2] = numbers[n - 1];
-				numbers[n - 1] = tmp;
+				tmp = numbers[n - MIN_CELLS];
+				numbers[n - MIN_CELLS] = numbers[n - NEXT_CELL];
+				numbers[n - NEXT_CELL] = tmp;
 			}
-			getMinToStart(numbers, n - 1);
+			getMinToStart(numbers, n - NEXT_CELL);
 		}
 	}
 }
@@ -412,92 +421,73 @@ void getMinToStart(int numbers[], int n)
 /*The following function gets 2 sorted arrays and combines them(sorted)*/
 void combineArrays(int sortedArr1[], int size1, int sortedArr2[], int size2)
 {
-	if (size1 == 0 || size2 == 0)
+	if (size1 == NOTHING || size2 == NOTHING)
 	{
-		if (size1 == 0 && size2 == 0)
+		if (size1 == NOTHING && size2 == NOTHING)
 		{
 			return;//if both equal to 0 -> it means you finished
 		}
-		if (size1 != 0)
+		if (size1 != NOTHING)
 		{//continue to put in arr1 into arr2
-			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			return combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
+			sortedArr2[size1 + size2 - NEXT_CELL] = sortedArr1[size1 - NEXT_CELL];
+			return combineArrays(sortedArr1, size1 - NEXT_CELL, sortedArr2, size2);
 		}
-		if (size2 != 0)
+		if (size2 != NOTHING)
 		{
-			size2 = 0;//if size2 equal to 0 -> it means you finished because all array1 is already in
+			size2 = NOTHING;//if size2 equal to 0 -> it means you finished because all array1 is already in
 			return combineArrays(sortedArr1, size1, sortedArr2, size2);
 		}
-			
+
 	}
 	else
 	{
-		
+
 		if (sortedArr1[size1 - 1] == sortedArr2[size2 - 1])
 		{//put only the arr1 into arr2(you can do both but it can be source for problems with size calculation)
-			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			return combineArrays(sortedArr1, size1 - 1, sortedArr2, size2);
+			sortedArr2[size1 + size2 - NEXT_CELL] = sortedArr1[size1 - NEXT_CELL];
+			return combineArrays(sortedArr1, size1 - NEXT_CELL, sortedArr2, size2);
 		}
-		if (sortedArr1[size1 - 1] < sortedArr2[size2 - 1])
+		if (sortedArr1[size1 - NEXT_CELL] < sortedArr2[size2 - NEXT_CELL])
 		{
-			sortedArr2[size1 + size2 - 1] = sortedArr2[size2 - 1];
-			return combineArrays(sortedArr1, size1, sortedArr2, size2 - 1);
+			sortedArr2[size1 + size2 - NEXT_CELL] = sortedArr2[size2 - NEXT_CELL];
+			return combineArrays(sortedArr1, size1, sortedArr2, size2 - NEXT_CELL);
 		}
-		if (sortedArr1[size1 - 1] > sortedArr2[size2 - 1])
+		if (sortedArr1[size1 - NEXT_CELL] > sortedArr2[size2 - NEXT_CELL])
 		{
-			sortedArr2[size1 + size2 - 1] = sortedArr1[size1 - 1];
-			return combineArrays(sortedArr1, size1-1, sortedArr2, size2);
+			sortedArr2[size1 + size2 - NEXT_CELL] = sortedArr1[size1 - NEXT_CELL];
+			return combineArrays(sortedArr1, size1 - NEXT_CELL, sortedArr2, size2);
 		}
-		
+
 
 	}
 }
 /*The following function gets an array, 2 indexes and number.
 The function will return how many numbers in the array(between start to end) are smaller than number*/
 int countSmaller(int arr[], int start, int end, int num)
-{//need to check
-	int mid = (start + end) / 2;
-	if(arr[mid]==num)
+{
+	if (start > end)//cheking if the array is not empty
 	{
-		return (mid - start);
+		return NOTHING;
 	}
-	else
+	if (start == end)//checking if we got to the last cell
 	{
-		if (arr[mid] < num)
+		if (arr[start] < num)
 		{
-		if(mid+1<=end)
-		{ 
-			if (arr[mid + 1] < num)
-			{
-				return (mid - start) + countSmaller(arr, mid+1, end, num);
-			}	
-			else
-			{
-				return (mid - start);
-			}
+			return ONLY_ONE;
 		}
 		else
 		{
-			return (mid-start);
-		}
-		}
-		if (arr[mid] > num)
-		{
-			if(mid-1>=start)
-			{ 
-				if (arr[mid - 1] > num)
-				{
-					return countSmaller(arr, start, mid-1, num);
-				}
-				else
-				{
-					return (mid-start);
-				}
-			}
-			else
-			{
-				return 0;
-			}
+			return NOTHING;
 		}
 	}
+	if (arr[start] < num)//cheking if we can go one more cell
+	{
+		return ONLY_ONE + countSmaller(arr, start + NEXT_CELL, end, num);
+	}
+	else
+	{
+		return NOTHING;
+	}
+		
+
 }
